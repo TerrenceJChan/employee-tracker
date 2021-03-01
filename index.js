@@ -1,8 +1,14 @@
+require('dotenv').config();
+
 const welcome = require('./src/welcome');
 const main = require('./src/main');
 
-// Displays welcome graphic
-welcome();
+const app = async () => {
+    // Displays welcome graphic
+    welcome();
 
-// Starts app
-main();
+    // Starts main loop
+    await main();
+};
+
+app();
