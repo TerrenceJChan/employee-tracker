@@ -1,9 +1,12 @@
 // Connect to database
 const inquirer = require('inquirer');
 
-const validation = (input) => {
-    if (input.length < 30) {
+const strValidation = (input) => {
+    if (input.length < 30 && input.length > 0) {
         return true;
+    } else {
+        console.log(' Please enter a valid string that is 0 < 30 characters.');
+        return false;
     }
 }
 
@@ -32,12 +35,18 @@ const addEmployees = async (db) => {
             {
                 name: 'fName',
                 type: 'input',
-                message: 'Please enter the new employee\'s FIRST NAME'
+                message: 'Please enter the new employee\'s FIRST NAME',
+                validate: fName => {
+                    return strValidation(fName);
+                }
             },
             {
                 name: 'lName',
                 type: 'input',
-                message: 'Please enter the new employee\'s LAST NAME'
+                message: 'Please enter the new employee\'s LAST NAME',
+                validate: lName => {
+                    return strValidation(lName);
+                }
             },
             {
                 name: 'role',
@@ -82,11 +91,22 @@ const addRole = async (db) => {
                 name: 'role',
                 type: 'input',
                 message: 'Please enter the role TITLE:',
+                validate: role => {
+                    return strValidation(role);
+                }
             },
             {
                 name: 'salary',
                 type: 'number',
-                message: 'Please enter the role\'s SALARY:'
+                message: 'Please enter the role\'s SALARY:',
+                validate: (salary) => {
+                    if (!isNaN(salary) && salary > 0) {
+                        return true;
+                    } else {
+                        console.log(' Please enter a valid integer.');
+                        return false;
+                    }
+                }
             },
             {
                 name: 'department',
@@ -132,18 +152,19 @@ const viewDept = async (db) => {
 };
 
 const addDept = async (db) => {
-    // WHEN I choose to add a department
-    // THEN I am prompted to enter the name of the department and that department is added to the database
     await inquirer
         .prompt(
             {
                 name: 'department',
                 type: 'input',
-                message: 'Please enter the name of the new DEPARTMENT:'
+                message: 'Please enter the name of the new DEPARTMENT:',
+                validate: department => {
+                    return strValidation(department);
+                }
             }
         )
         .then(({ department }) => {
-            db.query(`INSERT INTO department(name) VALUES (?)`, [department]);
+            db.query(`INSERT INTO department (name) VALUES (?)`, [department]);
         })
 };
 
