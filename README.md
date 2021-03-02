@@ -1,5 +1,4 @@
 # Team Profile Generator
-![License Badge](https://img.shields.io/badge/ISC.svg)  
 Create a databse for your organization's employees using an intuitive Node.js app!
 ## Table of Contents
 * [Installation](#installation)
