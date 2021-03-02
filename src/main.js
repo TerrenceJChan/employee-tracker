@@ -1,5 +1,5 @@
 const Database = require('../libs/Database')
-const { testQuery } = require('./actions');
+const { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept } = require('./actions');
 
 const inquirer = require('inquirer');
 const display = require('console.table');
@@ -24,25 +24,25 @@ const main = async () => {
             );
         switch (mainMenu) {
             case 'View all employees':
-                await testQuery(db);
-                beak;r
+                await viewEmployees(db);
+                break;
             case 'Add an employee':
-                // Code
+                await addEmployees(db);
                 break;
             case 'View all roles':
-                // Code
+                await viewRoles(db);
                 break;
             case 'Add a role':
-                // Code
+                await addRole(db);
                 break;
             case 'Update an employee role':
-                // Code
+                await updateEmployeeRole(db);
                 break;
             case 'View all departments':
-                // Code
+                await viewDept(db);
                 break;
             case 'Add a department':
-                // Code
+                await addDept(db);
                 break;
             case 'Quit application':
                 console.log('Bye');
