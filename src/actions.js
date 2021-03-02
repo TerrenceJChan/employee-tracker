@@ -1,6 +1,7 @@
 // Connect to database
 const inquirer = require('inquirer');
 
+// Used for validating strings
 const strValidation = (input) => {
     if (input.length < 30 && input.length > 0) {
         return true;
@@ -10,6 +11,7 @@ const strValidation = (input) => {
     }
 }
 
+// Displays all employees to display
 const viewEmployees = async (db) => {
     const results = await db.query(`
     SELECT employee.id AS ID,
@@ -26,10 +28,11 @@ const viewEmployees = async (db) => {
     console.table(results);
 };
 
+// Adds new employees
 const addEmployees = async (db) => {
-    let roleData = await db.query(`SELECT id, title FROM role`);
+    let roleData = await db.query(`SELECT id, title FROM role`); 
     let managerData = await db.query(`SELECT id, CONCAT(first_name, " ", last_name) AS Manager FROM employee`);
-    managerData.push({ id: managerData.length + 1, Manager: 'None' });
+    managerData.push({ id: managerData.length + 1, Manager: 'None' }); // Employees can have no manager, thus a 'None' option is provided
     await inquirer
         .prompt([
             {
@@ -52,7 +55,7 @@ const addEmployees = async (db) => {
                 name: 'role',
                 type: 'list',
                 message: 'Please select the new employee\'s ROLE',
-                choices: roleData.map(x => x.title)
+                choices: roleData.map(x => x.title) // This populates the choices with information from the database
             },
             {
                 name: 'manager',
@@ -62,7 +65,8 @@ const addEmployees = async (db) => {
             }
         ])
         .then(({ fName, lName, role, manager }) => {
-            const roleId = roleData.find(x => x.title === role);
+            const roleId = roleData.find(x => x.title === role); // Matches the selection with its respecting id value
+            // In the case that no manager is selected, the first result inserts the employee with a null value for their manager
             if (manager === 'None') {
                 db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, [fName, lName, roleId.id, null]);
             } else {
@@ -72,6 +76,7 @@ const addEmployees = async (db) => {
         });
 };
 
+// Displays all roles
 const viewRoles = async (db) => {
     const results = await db.query(`
     SELECT role.id AS ID,
@@ -83,6 +88,7 @@ const viewRoles = async (db) => {
     console.table(results);
 };
 
+// Adds a new role
 const addRole = async (db) => {
     let departmentData = await db.query(`SELECT id, name FROM department`);
     await inquirer
@@ -99,6 +105,7 @@ const addRole = async (db) => {
                 name: 'salary',
                 type: 'number',
                 message: 'Please enter the role\'s SALARY:',
+                // Validates a positive integer for a role's salary
                 validate: (salary) => {
                     if (!isNaN(salary) && salary > 0) {
                         return true;
@@ -121,6 +128,7 @@ const addRole = async (db) => {
         });
 };
 
+// Updates an employee's role
 const updateEmployeeRole = async (db) => {
     let employeeData = await db.query(`SELECT id, CONCAT(first_name, " ", last_name) AS Employee FROM employee`);
     let roleData = await db.query(`SELECT id, title FROM role`);
@@ -146,11 +154,13 @@ const updateEmployeeRole = async (db) => {
         })
 };
 
+// Displays all the departments
 const viewDept = async (db) => {
     const results = await db.query('SELECT department.id AS ID, name AS Department FROM department');
     console.table(results);
 };
 
+// Adds a new department
 const addDept = async (db) => {
     await inquirer
         .prompt(
@@ -168,4 +178,5 @@ const addDept = async (db) => {
         })
 };
 
+// Exports all the different functions to be used as selections in the main menu
 module.exports = { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept };
